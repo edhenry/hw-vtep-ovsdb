@@ -1,0 +1,27 @@
+module globaltable {
+	
+	namespace "urn:ietf:params:xml:ns:yang:hw-vtep-ovsdb:globaltable";
+    prefix "globaltable";
+
+    organization
+    "Solo contributor"
+
+    contact
+    "Module Creator : Matt Oswalt
+    	
+    	Email : matt@keepingitclassless.net
+    	Twitter handle : @Mierdin"
+
+    description
+    	"This YANG module contains the information necessary to describe the hw-vtep OVSDB-server schema"
+
+    revision 2014-02-28 {
+    	description 
+    	"Original Revision";
+    	reference
+    	"Open vSwitch Manual : http://openvswitch.org/docs/vtep.5.pdf"
+    }
+    /*** The "global" table contains references to other tables, so this module should be written once those modules are defined. ***/
+
+
+}
