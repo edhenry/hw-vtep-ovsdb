@@ -26,7 +26,7 @@ module physicalswitchtable {
     description "A physical switch that implements a VTEP"
 
         leaf-list ports {
-            type string; /*** TODO: Need to update to consume "Physical_Ports" table ***/
+            type tbl-Physical_Ports:physical_port_table;
             description
                 "Set of Physical_Ports";
         }
