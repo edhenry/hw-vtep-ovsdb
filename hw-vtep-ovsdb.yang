@@ -63,6 +63,7 @@ container manager-table {
 				description
 				 "Listens for connections on the specified TCP port (default: 6632). If ip, which must be expressed as an IP address (not a DNS name), is specified, then connections are restricted to the specified local IP address."
 			}
+		}
 			leaf max-backoff {
 				type uint16{
 					range "1000..65535";
