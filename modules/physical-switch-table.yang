@@ -1,0 +1,64 @@
+module physicalswitchtable {
+	
+	namespace "urn:ietf:params:xml:ns:yang:hw-vtep-ovsdb:tbl-Physical_Switch";
+    prefix "tbl-Physical_Switch";
+
+    organization
+    "Solo contributor"
+
+    contact
+    "Module Creator : Matt Oswalt
+    	
+    	Email : matt@keepingitclassless.net
+    	Twitter handle : @Mierdin"
+
+    description
+    	"This YANG module contains the information necessary to describe the hw-vtep OVSDB-server schema - Physical_Switch TABLE"
+
+    revision 2014-02-28 {
+    	description 
+    	"Original Revision";
+    	reference
+    	"Open vSwitch Manual : http://openvswitch.org/docs/vtep.5.pdf"
+    }
+
+    container physical_switch-table {
+    description "A physical switch that implements a VTEP"
+
+        leaf-list ports {
+            type string; /*** TODO: Need to update to consume "Physical_Ports" table ***/
+            description
+                "Set of Physical_Ports";
+        }
+
+        container network-status {
+
+            leaf-list management_ips {
+                type string;
+                description
+                    "IPv4 or IPv6 addresses at which the switch may be contacted for management purposes.";
+            }
+            leaf-list tunnel_ips {
+                type string;
+                description
+                    "IPv4 or IPv6 addresses on which the switch may originate or terminate tunnels.";
+            }
+            
+        }   
+
+        container identification {
+
+            leaf-list name {
+                type string;
+                description
+                    "Symbolic name for the switch, such as its hostname. Must be unique within table";
+            }
+            leaf-list description {
+                type string;
+                description
+                    "An extended description for the switch, such as its switch login banner.";
+            }
+            
+        }   
+    }
+}
