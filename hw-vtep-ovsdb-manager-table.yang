@@ -1,7 +1,7 @@
 module hw-vtep-ovsdb-manager-table {
 	
-	namespace "urn:ietf:params:xml:ns:yang:hw-vtep-ovsdb";
-    prefix "hwvtep";
+	namespace "urn:ietf:params:xml:ns:yang:hw-vtep-ovsdb:manager-table";
+    prefix "manager-table";
 
     organization
     "Solo contributor"
@@ -22,8 +22,6 @@ module hw-vtep-ovsdb-manager-table {
     	reference
     	"Open vSwitch Manual : http://openvswitch.org/docs/vtep.5.pdf"
     }
-
-/*** collection of table related field types within OVS OVSDB schema ***/
 
 container manager-table {
 	description "Contains configuration for a database connection to an Open vSwitch database (OVSDB) client"
