@@ -1,108 +1,163 @@
-module hw-vtep-ovsdb-manager-table {
+module manager-table {
 	
 	namespace "urn:ietf:params:xml:ns:yang:hw-vtep-ovsdb:manager-table";
     prefix "manager-table";
 
+    import "ietf-inet-types" { prefix "inet"; }
+
     organization
-    "Solo contributor"
+    "Solo contributor";
 
     contact
     "Module Creator : Edward Henry
     	
     	Email : Networkn3rd@gmail.com
     	Skype handle : ehenry9
-    	Twitter handle : @Networkn3rd"
+    	Twitter handle : @Networkn3rd";
 
     description
-    	"This YANG module contains the information necessary to describe the hw-vtep OVSDB schema implemented within hw-vtep"
+    	"This YANG module contains the information necessary to describe the hw-vtep OVSDB schema implemented within hw-vtep";
 
     revision 2014-02-28 {
     	description 
     	"Original Revision";
     	reference
-    	"Open vSwitch Manual : http://openvswitch.org/docs/vtep.5.pdf"
+    	"Open vSwitch Manual : http://openvswitch.org/docs/vtep.5.pdf";
     }
 
-container manager-table {
-	description "Contains configuration for a database connection to an Open vSwitch database (OVSDB) client"
+    feature dscp {
+    	status current;
+    	description
+    		"The Differentiated Service Code Point (DSCP) is specified using 6 bits in the Type of Service (TOS) field in the IP header. DSCP provides a mechanism to classify the network 
+    		traffic and pro- vide Quality of Service (QoS) on IP networks. The DSCP value specified here is used when estab- lishing the connection between the manager and the Open vSwitch. 
+    		If no value is specified, a default value of 48 is chosen. Valid DSCP values must be in the range 0 to 63.";
+    }
 
-	container core-features {
+    container manager-table {
+    	description 
+    		"Configuration for a database connection to an Open vSwitch database (OVSDB) client.
+			The Open vSwitch database server can initiate and maintain active connections to remote clients. 
+			It can also listen for database connections.";
 
-		container target {
+		leaf target {
+			type string;
+			description
+				"string (must be unique within table) Connection method for managers.";
+		}
 
-			leaf target {
-				type string;
-				description
-					"Connection methods for managers";
-
+		container ports {
 			leaf ssl-ip-port {
-				type string;
-				default "6632";
-				description
-				 "The speciﬁed SSL port (default: 6632) on the host at the given ip, which must be expressed as an IP address (not a DNS name). SSL key and certiﬁcate conﬁguration happens outside the database.";
-			}
-			leaf tcp-ip-port {
-				type string;
-				default "6632";
-				description
-				 "The speciﬁed TCP port (default: 6632) on the host at the given ip, which must be expressed as an IP address (not a DNS name).";
+				type inet:port-number;
 			}
 			leaf pssl-port-ip {
-				type string;
-				default "6632";
-				description
-				 "Listens for SSL connections on the speciﬁed TCP port (default: 6632). If ip, which must
-				  be expressed as an IP address (not a DNS name), is speciﬁed, then connections are
-				  restricted to the speciﬁed local IP address.";
+				type inet:port-number;
+			}
+			leaf tcp-ip-port {
+				type inet:port-number;
 			}
 			leaf ptcp-port-ip {
-				type string;
-				default "6632";
-				description
-				 "Listens for connections on the specified TCP port (default: 6632). If ip, which must be expressed as an IP address (not a DNS name), is specified, then connections are restricted to the specified local IP address."
+				type inet:port-number;
 			}
+
 		}
-	}
-		container client-failure-detection-handling {
 
+		container client-failure-and-detection {
 			leaf max-backoff {
-				type uint16{
-					range "1000..65535";
-					default "1000";
-				}
-				description
-				 "Maximum number of milliseconds to wait between connection attempts. Default is implementation-specific.
-
-				 According to the Open vSwitch Manual located at http://openvswitch.org/docs/vtep.5.pdf this should be a minimum of 1000";
-			}
-
-			feature inactivity-probe {
-				description
-				 "Maximum number of milliseconds of idle time on connection to the client before sending an inactivity probe message. If Open vSwitch does not communicate with the client for the specified number of seconds, it will send a probe. If a response is not received for the same additional amount of time, Open vSwitch assumes the connection has been broken and attempts to reconnect. Default is implementation-specific. A value of 0 disables inactivity probes.";
-			}
-
-			leaf inactivity_probe {
-				if-feature inactivity-probe;
 				type uint16;
 				units "milliseconds";
+				range 1000..65535;
+				default 1000;
+				description
+					"Maximum number of milliseconds to wait between connection attempts. Default is implementa- tion-specific.";
+			}
+			leaf inactivity-probe {
+				type uint16;
+				default 0;
+				range 0..65535;
+			}
+		}
+
+		container status {
+			config false;
+			description
+				"describes the current status of the connection";
+
+			leaf is-connected {
+				type boolean;
 				config false;
 				description
-				 ""
+					"true if currently connected to this manager, false otherwise.";
+			}
+
+			leaf last-error {
+				type string;
+				config false;
+				description
+					"A human-readable description of the last error on the connection to the manager; i.e. str- error(errno). 
+					This key will exist only if an error has occurred.";
+			}
+
+			leaf-list status-state {
+				type string;
+				config false;
+				description
+					"optional string, one of ACTIVE, VOID, CONNECTING, IDLE, or BACKOFF The state of the connection to the manager";
+
+			}
+
+			leaf status-sec-since-connect {
+				type string;
+				config false;
+				description
+					"optional string, containing an integer, at least 0
+					The amount of time since this manager last successfully 
+					connected to the database (in seconds). Value is empty if 
+					manager has never successfully connected.";
+			}
+
+			leaf status-sec-since-disconnect {
+				type string;
+				config false;
+				description
+					"optional string, containing an integer, at least 0
+					The amount of time since this manager last disconnected 
+					from the database (in seconds). Value is empty if manager 
+					has never disconnected.";
+			}
+
+			leaf-list status-locks-held {
+				type string;
+				config false;
+				description
+					"Space-separated list of the names of OVSDB locks that the 
+					connection holds. Omitted if the con- nection does not hold any locks.";
+			}
+
+			leaf-list status-locks-waiting {
+				type string;
+				config false;
+				description
+					"Space-separated list of the names of OVSDB locks that the connection 
+					is currently waiting to acquire. Omitted if the connection is not waiting 
+					for any locks.";
+			}
+
+			leaf-list status-locks-lost {
+				type string;
+				config false;
+				description
+					"Space-separated list of the names of OVSDB locks that the connection has 
+					had stolen by another OVSDB client. Omitted if no locks have been stolen 
+					from this connection.";
+			}
+
+			leaf-list status-n-connections {
+				type string;
+				
 			}
 
 		}
-		container status {
-
-			leaf is_connected {
-				type boolean;
-			}
-		}
-
-		}
-
-		}
-	}
-	
-}
+		
+    }
 
 }
